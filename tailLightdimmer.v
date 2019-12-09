@@ -1,5 +1,7 @@
-module tailLightdimmer(input dimclk,input,lights,input[2:0] Lcba,input[2:0] Rabc,output reg Lc, output reg Lb, output reg La, output reg Ra,output reg Rb, output reg Rc);
-
+module tailLightdimmer(dimclk,lights,Lcba,Rabc,Lc,Lb,La,Ra,Rb,Rc);
+input dimclk, lights;
+input[2:0] Lcba, Rabc;
+output reg Lc, Lb, La, Ra, Rb, Rc;
  reg toggle;              
  always@(posedge dimClk ) begin
  if(lights) begin
