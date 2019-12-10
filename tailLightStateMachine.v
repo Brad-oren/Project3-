@@ -61,7 +61,7 @@ output reg[2:0] Lcba, Rabc, state;
  else currentState <= nextState;
  end
 
- always@( posedge clk ) begin            
+ always@(posedge clk) begin            
  nextState = currentState;
   if(reset) begin                
   nextState = `state_off;
