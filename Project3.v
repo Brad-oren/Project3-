@@ -34,9 +34,7 @@ reg right;
 wire[2:0] Lcba;
 wire[2:0] Rabc;
 wire clock_1Hz;
-//wire reg reset;
-//wire right;
-//wire left;
+
 
 
 //=======================================================
