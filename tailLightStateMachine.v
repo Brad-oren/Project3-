@@ -19,7 +19,7 @@ output reg[2:0] Lcba, Rabc, state;
  reg[3:0] currentState;         
  reg[3:0] nextState;            
 
-  always@( posedge clk ) begin
+  always@( * ) begin
  case(currentState)
  `state_off: begin
 	Lcba = 3'b000;                      
@@ -56,43 +56,26 @@ output reg[2:0] Lcba, Rabc, state;
 	endcase 
 	end
  
- always@(posedge clk) begin          
+ always@(*) begin          
  if(reset) currentState <= `state_off;
  else currentState <= nextState;
  end
 
- always@( * ) begin            
+ always@( posedge clk ) begin            
  nextState = currentState;
   if(reset) begin                
   nextState = `state_off;
   end
-  else if(!reset && hazard && !left && !right &&(currentState != `state_hazard)) begin      
+   else if(!reset && !hazard && !left && !right) begin 
+  nextState = `state_off;
+  end
+  else if(!reset && hazard && (currentState != `state_hazard)) begin      
    nextState = `state_hazard;           
    end 
-   else if(!reset && hazard && left && right &&(currentState != `state_hazard)) begin  
-   nextState = `state_hazard;            
-   end
-   else if(!reset && hazard && left && !right &&(currentState != `state_hazard)) begin  
-   nextState = `state_hazard;            
-   end
-   else if(!reset && hazard && !left && right &&(currentState != `state_hazard)) begin  
-   nextState = `state_hazard;            
-   end
-    else if(!reset && hazard && !left && !right &&(currentState == `state_hazard)) begin 
+    else if(!reset && hazard && (currentState == `state_hazard)) begin 
   nextState = `state_off;
   end
-   else if(!reset && hazard && left && right &&(currentState == `state_hazard)) begin 
-  nextState = `state_off;
-  end
-   else if(!reset && hazard && left && !right &&(currentState == `state_hazard)) begin 
-  nextState = `state_off;
-  end
-   else if(!reset && hazard && !left && right &&(currentState == `state_hazard)) begin 
-  nextState = `state_off;
-  end
-  else if(!reset && hazard && !left && !right &&(currentState == `state_hazard)) begin 
-  nextState = `state_off;
-  end
+   
   else begin
   case (currentState)
 	`state_off: begin              
@@ -108,7 +91,7 @@ output reg[2:0] Lcba, Rabc, state;
 	if(!reset && !hazard && left && right) nextState = `state_r1;
 	end
 	`state_l3: begin
-	if(!reset && !hazard && left && !right) nextState = `state_l1;
+	if(!reset && !hazard && left && !right) nextState = `state_off;
 	if(!reset && !hazard && left && right) nextState = `state_r1;
 	end
 	`state_r1: begin
@@ -121,12 +104,11 @@ output reg[2:0] Lcba, Rabc, state;
 	end
 	`state_r3: begin
 	if(!reset &&  !hazard && left && !right) nextState = `state_l1;
-	if(!reset &&  !hazard && left && right) nextState = `state_r1;	
+	if(!reset &&  !hazard && left && right) nextState = `state_off;	
 	end
 	`state_hazard: begin
 	if(!reset &&  !hazard && left && !right) nextState = `state_l1;
 	if(!reset &&  !hazard && left && right) nextState = `state_r1;
-	if(!reset &&  !hazard && !left && !right) nextState = `state_off;
 	end 
 	  
 	
