@@ -1,8 +1,8 @@
 
-module tailLightStateMachine( clk, reset, hazard, left, right,  Lcba,  Rabc);
+module tailLightStateMachine( clk, reset, hazard, left, right,  Lcba,  Rabc, state);
                 
 input clk, reset, hazard, left, right; 
-output reg[2:0] Lcba, Rabc;
+output reg[2:0] Lcba, Rabc, state;
 
 
  `define state_off   4'd0
@@ -19,7 +19,7 @@ output reg[2:0] Lcba, Rabc;
  reg[3:0] currentState;         
  reg[3:0] nextState;            
 
-  always@( * ) begin
+  always@( posedge clk ) begin
  case(currentState)
  `state_off: begin
 	Lcba = 3'b000;                      
@@ -66,31 +66,31 @@ output reg[2:0] Lcba, Rabc;
   if(reset) begin                
   nextState = `state_off;
   end
-  else if(!reset && hazard && !left && !right (currentState != `state_hazard)) begin      
+  else if(!reset && hazard && !left && !right &&(currentState != `state_hazard)) begin      
    nextState = `state_hazard;           
    end 
-   else if(!reset && hazard && left && right (currentState != `state_hazard)) begin  
+   else if(!reset && hazard && left && right &&(currentState != `state_hazard)) begin  
    nextState = `state_hazard;            
    end
-   else if(!reset && hazard && left && !right (currentState != `state_hazard)) begin  
+   else if(!reset && hazard && left && !right &&(currentState != `state_hazard)) begin  
    nextState = `state_hazard;            
    end
-   else if(!reset && hazard && !left && right (currentState != `state_hazard)) begin  
+   else if(!reset && hazard && !left && right &&(currentState != `state_hazard)) begin  
    nextState = `state_hazard;            
    end
-    else if(!reset && hazard && !left && !right (currentState == `state_hazard)) begin 
+    else if(!reset && hazard && !left && !right &&(currentState == `state_hazard)) begin 
   nextState = `state_off;
   end
-   else if(!reset && hazard && left && right (currentState == `state_hazard)) begin 
+   else if(!reset && hazard && left && right &&(currentState == `state_hazard)) begin 
   nextState = `state_off;
   end
-   else if(!reset && hazard && left && !right (currentState == `state_hazard)) begin 
+   else if(!reset && hazard && left && !right &&(currentState == `state_hazard)) begin 
   nextState = `state_off;
   end
-   else if(!reset && hazard && !left && right (currentState == `state_hazard)) begin 
+   else if(!reset && hazard && !left && right &&(currentState == `state_hazard)) begin 
   nextState = `state_off;
   end
-  else if(!reset && hazard && !left && !right (currentState == `state_hazard)) begin 
+  else if(!reset && hazard && !left && !right &&(currentState == `state_hazard)) begin 
   nextState = `state_off;
   end
   else begin
@@ -130,7 +130,14 @@ output reg[2:0] Lcba, Rabc;
 	end 
 	  
 	
+	
 	endcase  
 	end   
 	end
+
+	always@(posedge clk) begin
+		state <= currentState;
+		end
+
+
 	endmodule
